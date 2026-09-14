@@ -1,10 +1,10 @@
-public class SessionList {
+public class MyLinkedList {
     SessionLink head = null;
 
     // constructors
-    public SessionList() {
+    public MyLinkedList() {
     }
-    public SessionList(SessionLink h){
+    public MyLinkedList(SessionLink h){
         this.head = h;
     }
 
@@ -50,7 +50,7 @@ public class SessionList {
     }
 
     // handle the adding of a session, decide which of the above 3 methods to use
-    public SessionList handleAdd(Session s){
+    public MyLinkedList handleAdd(Session s){
         if(this.head == null){
             this.head = new SessionLink(s,null);
             return this;

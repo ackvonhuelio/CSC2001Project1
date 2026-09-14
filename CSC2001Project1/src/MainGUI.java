@@ -14,11 +14,11 @@ public class MainGUI extends JFrame {
     private JTextField maxField;
     private JTextArea outputArea;
     // TODO: Create instance variable with type linked list
-    private SessionList sessions;
+    private MyLinkedList sessions;
 
     public MainGUI() {
         // TODO: Create a new LinkList
-        this.sessions = new SessionList();
+        this.sessions = new MyLinkedList();
 
         setTitle("Employee Mentorship and Inclusion Manager");
         setSize(600, 600);

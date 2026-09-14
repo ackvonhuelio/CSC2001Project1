@@ -1,7 +1,7 @@
 
 public class Main {
     public void main(String[] args){
-        SessionList sessions = new SessionList();
+        MyLinkedList sessions = new MyLinkedList();
         Session s1 = new Session(1, "", "","", "","","", 30);
         Session s2 = new Session(10, "", "","", "","","", 35);
         Session s3 = new Session(4, "", "","", "","","", 20);
