@@ -1,76 +1,89 @@
 public class MyLinkedList {
-    SessionLink head = null;
+    private Session data;
+    private MyLinkedList next;
 
     // constructors
     public MyLinkedList() {
+        this.next = null;
+        this.data = null;
     }
-    public MyLinkedList(SessionLink h){
-        this.head = h;
+    public MyLinkedList(Session h, MyLinkedList n){
+        this.next = n;
+        this.data = h;
     }
 
     // get the Session by ID
     public Session grabById(int id){
-        SessionLink cur = this.head;
+        if(this.data == null){
+            return null;
+        }
+        MyLinkedList cur = this;
         while (cur != null) {
-            if(cur.getData().getSessionID() == id){
-                return cur.getData();
+            if(cur.data.getSessionID() == id){
+                return cur.data;
             }
-            cur = cur.getNext();
+            cur = cur.next;
         }
         return null;
     }
 
     // add session to the start
-    public void addFirst(Session s){
-        this.head = new SessionLink(s,this.head);
+    public MyLinkedList addFirst(Session s){
+        if(this.data == null){
+            return new MyLinkedList(s, null);
+        }
+        return new MyLinkedList(s,this);
     }
 
     // add session to the end
-    public void addEnd(Session s){
-            SessionLink cur = this.head;
-            while (cur.getNext() != null) {
-                cur = cur.getNext();
+    public MyLinkedList addEnd(Session s){
+            if(this.data == null){
+                return new MyLinkedList(s, null);
             }
-            cur.setNext(new SessionLink(s, null));
+            MyLinkedList cur = this;
+            while (cur.next != null) {
+                cur = cur.next;
+            }
+            cur.next = new MyLinkedList(s, null);
+            return this;
     }
 
     // add session to the correct location based on ID
-    public boolean insertAfter(Session s){
-        SessionLink cur = this.head;
-        while(cur.getNext() != null) {
-            if (s.getSessionID() < cur.getNext().getData().getSessionID()) {
-                SessionLink sl = new SessionLink(s, cur.getNext());
-                cur.setNext(sl);
-                return true;
+    public MyLinkedList insertAfter(Session s){
+        if(this.data == null){
+            return new MyLinkedList(s, null);
+        }
+        if(s.getSessionID() < this.data.getSessionID()){
+            return new MyLinkedList(s,this);
+        }
+        MyLinkedList cur = this;
+        while(cur.next != null) {
+            if (s.getSessionID() < cur.next.data.getSessionID()) {
+                MyLinkedList sl = new MyLinkedList(s, cur.next);
+                cur.next = sl;
+                return this;
             }else{
-                cur = cur.getNext();
+                cur = cur.next;
             }
         }
-        return false;
+        cur.next = new MyLinkedList(s, null);
+        return this;
     }
 
     // handle the adding of a session, decide which of the above 3 methods to use
     public MyLinkedList handleAdd(Session s){
-        if(this.head == null){
-            this.head = new SessionLink(s,null);
-            return this;
-        }else{
-            if(s.getSessionID() < this.head.getData().getSessionID()){
-                this.addFirst(s);
-                return this;
-            }
-
-            // try to insert based on lesser ID
-            boolean didInsert = this.insertAfter(s);
-
-            if(didInsert){
-                return this;
-            }else{
-                // if it didnt insert its the last element
-                this.addEnd(s);
-                return this;
-            }
+        // TODO
+        if(this.data == null || s.getSessionID() < this.data.getSessionID()){
+            return this.addFirst(s);
         }
+        MyLinkedList cur = this;
+        while(cur.next != null){
+            cur = cur.next;
+        }
+        if(s.getSessionID() > cur.data.getSessionID()){
+            return this.addEnd(s);
+        }
+        return this.insertAfter(s);
     }
 
     // search and create a string for the info of all sessions matching search parameters.
@@ -78,9 +91,9 @@ public class MyLinkedList {
         String str = "";
         int countMentor = 0;
         int countId = 0;
-        SessionLink cur = this.head;
+        MyLinkedList cur = this;
         while(cur != null){
-                Session s = cur.getData();
+                Session s = cur.data;
                 boolean add = false;
             if(hasId && s.getSessionID() == id) {
                 add = true;
@@ -94,7 +107,7 @@ public class MyLinkedList {
                 str += s.toString();
                 str += "\n\n";
             }
-            cur = cur.getNext();
+            cur = cur.next;
         }
 
         if(hasId && countId == 0){
@@ -107,48 +120,66 @@ public class MyLinkedList {
     }
 
     // remove a session by ID
-    public boolean removeById(int id){
-        if(this.head != null && this.head.getData().getSessionID() == id){
-            this.head = this.head.getNext();
-            return true;
-        }
-        SessionLink cur = this.head;
-        while(cur != null && cur.getNext() != null){
-            if(cur.getNext().getData().getSessionID() == id){
-                cur.setNext(cur.getNext().getNext());
-                return true;
+    public String removeById(int id){
+        if(this != null && this.data.getSessionID() == id){
+            if(this.next != null) {
+                this.data = this.next.data;
+                this.next = this.next.next;
+            }else{
+                this.data = null;
             }
-            cur = cur.getNext();
+            return "Session "+id+" Deleted";
         }
-        return false;
+
+        MyLinkedList cur = this;
+        while(cur != null && cur.next != null){
+            if(cur.next.data.getSessionID() == id){
+                cur.next = cur.next.next;
+                return "Session "+id+" Deleted";
+            }
+            cur = cur.next;
+        }
+       return "Session Not Found";
+    }
+
+    // remove by session
+    public String remove(Session s){
+        if(s == null){
+            return "Session Not Found";
+        }
+        return this.removeById(s.getSessionID());
     }
 
     // try to add a participant to a session by ID, if the session is full return false
     public boolean registerParticipant(int id){
-        SessionLink cur = this.head;
+        MyLinkedList cur = this;
         while(cur != null){
-            if(cur.getData().getSessionID() == id){
-                if(cur.getData().getCurrentParticipants() < cur.getData().getMaxParticipants()) {
-                    cur.getData().setCurrentParticipants(cur.getData().getCurrentParticipants() + 1);
+            if(cur.data.getSessionID() == id){
+                if(cur.data.getCurrentParticipants() < cur.data.getMaxParticipants()) {
+                    cur.data.setCurrentParticipants(cur.data.getCurrentParticipants() + 1);
                     return true;
                 }else{
                     return false;
                 }
             }
-            cur = cur.getNext();
+            cur = cur.next;
         }
         return false;
+    }
+
+    public void display(){
+        System.out.println(this.toString());
     }
 
     @Override
     public String toString() {
         String str = "";
-        SessionLink cur = this.head;
+        MyLinkedList cur = this;
         while(cur != null){
-            Session s = cur.getData();
+            Session s = cur.data;
             str += s.toString();
             str += "\n\n";
-            cur = cur.getNext();
+            cur = cur.next;
         }
         return str;
     }

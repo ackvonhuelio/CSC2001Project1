@@ -140,7 +140,7 @@ public class MainGUI extends JFrame {
                     outputArea.setText("Session Updated Successfully\n\n" + cur.toString());
                 } else {
                     Session s = new Session(id, getInput(0), getInput(1), getInput(2), getInput(3), getInput(4), getInput(5), max);
-                    sessions.handleAdd(s);
+                    sessions = sessions.handleAdd(s);
                     outputArea.setText("Session Added Successfully\n\n" + s.toString());
                 }
 
@@ -234,12 +234,8 @@ public class MainGUI extends JFrame {
 
         try {
             int id = Integer.parseInt(idField.getText());
-            boolean removed = sessions.removeById(id);
-            if(removed) {
-                outputArea.setText("Session " + id + " Removed Successfully\n");
-            }else{
-                outputArea.setText("Session " + id + " Not Found\n");
-            }
+            outputArea.setText(sessions.remove(sessions.grabById(id)));
+
             clearFields();
         }
         catch(Exception e) {
