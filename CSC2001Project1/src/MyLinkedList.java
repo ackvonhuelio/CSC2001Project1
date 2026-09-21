@@ -177,6 +177,24 @@ public class MyLinkedList {
         return false;
     }
 
+    // try to remove a participant to a session by ID, if the session is empty return false
+    public boolean unregisterParticipant(int id){
+        MyLinkedList cur = this;
+        while(cur != null){
+            if(cur.data.getSessionID() == id){
+                if(cur.data.getCurrentParticipants() > 0) {
+                    cur.data.setCurrentParticipants(cur.data.getCurrentParticipants() - 1);
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+            cur = cur.next;
+        }
+        return false;
+    }
+
+
     public void display(){
         System.out.println(this.toString());
     }

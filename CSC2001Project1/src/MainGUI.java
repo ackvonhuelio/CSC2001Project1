@@ -67,6 +67,7 @@ public class MainGUI extends JFrame {
         JButton searchButton = new JButton("Search");
         JButton removeButton = new JButton("Remove");
         JButton registerButton = new JButton("Register");
+        JButton unregisterButton = new JButton("Unregister");
         JButton exitButton = new JButton("Exit");
         // add Buttons
         buttonPanel.add(addButton);
@@ -74,6 +75,7 @@ public class MainGUI extends JFrame {
         buttonPanel.add(searchButton);
         buttonPanel.add(removeButton);
         buttonPanel.add(registerButton);
+        buttonPanel.add(unregisterButton);
         buttonPanel.add(exitButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
@@ -84,6 +86,7 @@ public class MainGUI extends JFrame {
         searchButton.addActionListener(e -> searchSession());
         removeButton.addActionListener(e -> removeSession());
         registerButton.addActionListener(e -> registerParticipant());
+        unregisterButton.addActionListener(e -> unregisterParticipant());
         exitButton.addActionListener(e -> System.exit(0));
     }
     // DO NOT CHANGE THIS METHOD!
@@ -275,6 +278,30 @@ public class MainGUI extends JFrame {
                     str += "Participant registered";
                 }else{
                     str += "Registration failed (Session is full)";
+                }
+                str += "\n\n";
+                str += sessions.search("", id, true);
+                outputArea.setText(str);
+            }else{
+                outputArea.setText("Session " + id + " Not Found\n");
+            }
+        }
+        catch(Exception e) {
+            outputArea.setText("Invalid session ID input");
+        }
+    }
+
+    private void unregisterParticipant() {
+        try {
+            int id = Integer.parseInt(idField.getText());
+
+            if(sessions.grabById(id) != null) {
+                String str = "";
+                boolean registered = sessions.unregisterParticipant(id);
+                if(registered){
+                    str += "Participant unregistered";
+                }else{
+                    str += "Unegistration failed (Session is empty)";
                 }
                 str += "\n\n";
                 str += sessions.search("", id, true);
