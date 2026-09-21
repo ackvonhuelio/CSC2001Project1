@@ -221,7 +221,14 @@ public class MainGUI extends JFrame {
         if(!hasId && mentor.isEmpty()){
             outputArea.setText("Please enter a Session ID or Mentor name");
         }else{
-            outputArea.setText(sessions.search(mentor, id, hasId));
+            if(hasId && mentor.isEmpty()){
+                outputArea.setText(sessions.searchIByID(id));
+            }else if(hasId){
+                outputArea.setText(sessions.search(mentor, id, hasId));
+            }else{
+                outputArea.setText(sessions.searchByMentor(mentor));
+            }
+
         }
         
     }
@@ -234,7 +241,15 @@ public class MainGUI extends JFrame {
 
         try {
             int id = Integer.parseInt(idField.getText());
-            outputArea.setText(sessions.remove(sessions.grabById(id)));
+            Session session = sessions.grabById(id);
+            if(session == null) {
+                outputArea.setText("Could not find session "+id);
+            }else{
+                outputArea.setText("Session "+id+" removed");
+                sessions = sessions.remove(session);
+            }
+
+
 
             clearFields();
         }

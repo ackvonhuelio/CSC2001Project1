@@ -14,6 +14,9 @@ public class MyLinkedList {
 
     // get the Session by ID
     public Session grabById(int id){
+        if(this == null){
+            return null;
+        }
         if(this.data == null){
             return null;
         }
@@ -86,6 +89,13 @@ public class MyLinkedList {
         return this.insertAfter(s);
     }
 
+    public String searchIByID(int id){
+        return this.search("",id,true);
+    }
+    public String searchByMentor(String mentor){
+        return this.search(mentor,0,false);
+    }
+
     // search and create a string for the info of all sessions matching search parameters.
     public String search(String mentor, int id, boolean hasId){
         String str = "";
@@ -120,7 +130,7 @@ public class MyLinkedList {
     }
 
     // remove a session by ID
-    public String removeById(int id){
+    public MyLinkedList removeById(int id){
         if(this != null && this.data.getSessionID() == id){
             if(this.next != null) {
                 this.data = this.next.data;
@@ -128,24 +138,24 @@ public class MyLinkedList {
             }else{
                 this.data = null;
             }
-            return "Session "+id+" Deleted";
+            return this;
         }
 
         MyLinkedList cur = this;
         while(cur != null && cur.next != null){
             if(cur.next.data.getSessionID() == id){
                 cur.next = cur.next.next;
-                return "Session "+id+" Deleted";
+                return this;
             }
             cur = cur.next;
         }
-       return "Session Not Found";
+        return this;
     }
 
     // remove by session
-    public String remove(Session s){
+    public MyLinkedList remove(Session s){
         if(s == null){
-            return "Session Not Found";
+            return null;
         }
         return this.removeById(s.getSessionID());
     }
